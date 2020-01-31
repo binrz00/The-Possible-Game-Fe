@@ -1,7 +1,6 @@
 import { DIMENSIONS } from "../utils/constants";
 
 export default function makeLevel(level) {
-  console.log(level);
   return level.reduce((bricks, row, y) => {
     return [
       ...bricks,

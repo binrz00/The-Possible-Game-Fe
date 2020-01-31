@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./Ball.css";
 import { DIMENSIONS } from "../../utils/constants";
 

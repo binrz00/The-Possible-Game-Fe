@@ -3,16 +3,21 @@ import React, { useContext } from "react";
 import Paddle from "../Paddle";
 import Ball from "../Ball";
 import Brick from "../Brick";
-
+import HighScores from "../HighScores";
 import { GameContext } from "../../state/context";
 import { DIMENSIONS } from "../../utils/constants";
 import Score from "../Score";
 import Lives from "../Lives";
 
+
 export default function GameContainer() {
   const { state } = useContext(GameContext);
-
+  if (state.isDead === true){
+    return <HighScores/>
+  }
   return (
+  <>
+  {state.isPlaying &&
     <div
       className="container"
       style={{
@@ -28,6 +33,8 @@ export default function GameContainer() {
       <Ball pos={state.ball} />
       <Score />
       <Lives />
-    </div>
+    </div>}
+ {!state.isPlaying && <HighScores/>}
+    </>
   );
 }
