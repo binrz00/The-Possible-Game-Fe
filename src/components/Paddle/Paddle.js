@@ -1,19 +1,11 @@
 import React from "react";
 import "./Paddle.css";
-import { DIMENSIONS } from "../../utils/constants";
 
-export default function Paddle({ paddleX }) {
+export default function Paddle({ isPlayerTwo, paddleY }) {
   return (
     <div
-      className="paddle"
-      style={{
-        left: `${paddleX}px`,
-        width: DIMENSIONS.DEFAULT.PADDLE.WIDTH,
-        height: DIMENSIONS.DEFAULT.PADDLE.HEIGHT,
-        top:
-          DIMENSIONS.DEFAULT.HEIGHT -
-          (DIMENSIONS.DEFAULT.PADDLE.HEIGHT + DIMENSIONS.DEFAULT.BALL.HEIGHT)
-      }}
+      className={isPlayerTwo ? "paddle player2" : "paddle"}
+      style={{ top: `${paddleY}px` }}
     />
   );
 }

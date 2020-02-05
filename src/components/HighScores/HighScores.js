@@ -1,7 +1,4 @@
 import React, {useEffect,useState,useContext } from "react";
-
-import { DIMENSIONS } from "../../utils/constants";
-
 import Axios from "axios";
 import { GameContext } from "../../state/context";
 
@@ -16,7 +13,7 @@ const[HighScores,setHighScores] = useState([]);
   
   return (
      
-      <div style={{margin:"auto",width: DIMENSIONS.DEFAULT.WIDTH}}>
+      <div style={{margin:"auto",width:"300"}}>
       <h1>High Scores</h1>
         <ol>
           {console.log(HighScores)}
