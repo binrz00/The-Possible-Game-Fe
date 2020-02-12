@@ -1,11 +1,37 @@
 import React from "react";
 import "./Paddle.css";
+import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
-export default function Paddle({ isPlayerTwo, paddleY }) {
-  return (
-    <div
-      className={isPlayerTwo ? "paddle player2" : "paddle"}
-      style={{ top: `${paddleY}px` }}
-    />
-  );
+class Paddle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+  render() {
+    const test = (
+      <div
+        className="paddle pic"
+        style={{
+          top: `${this.props.movement.y}px`,
+          transform: `rotate(${this.props.movement.r}deg)`
+        }}
+      >
+        <div className="top-right" />
+        <div className="top-left" />
+        <div className="bottom-right" />
+        <div className="bottom-left" />
+      </div>
+    );
+    return (
+      <ReactCSSTransitionGroup
+        transitionName="pic"
+        transitionEnterTimeout={700}
+        transitionLeaveTimeout={700}
+      >
+        {test}
+      </ReactCSSTransitionGroup>
+    );
+  }
 }
+
+export default Paddle;

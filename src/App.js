@@ -1,185 +1,76 @@
-import React, { useReducer, useEffect } from "react";
-import "./styles.css";
-import Paddle from "./components/Paddle";
-import { level_one } from "./levels";
-import Obstacle from "./components/Obstacle";
-import willCollide from "./utils/willCollide";
-import GameProvider from "./state/context";
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Grommet } from "grommet";
+import Navbar from "./components/layout/Navbar";
+import Landing from "./components/layout/Landing";
+import Register from "./components/auth/Register";
+import Login from "./components/auth/Login";
+import PrivateRoute from "./components/private-route/PrivateRoute";
+import Dashboard from "./components/dashboard/Dashboard";
+import Game from "./components/game/Game";
 
-const obstacles = level_one.reduce((acc, cur, y) => {
-  const blocks = cur.split("").reduce((bs, b, x) => {
-    if (b === " ") {
-      return [...bs];
-    }
-    return [
-      ...bs,
-      {
-        type: b,
-        x: x * 10,
-        y: y * 10,
-        width: 10,
-        height: 10
+import { Auth } from "./auth/auth";
+
+import "./App.css";
+
+const theme = {
+  global: {
+    colors: {
+      "light-2": "#f5f5f5",
+      text: {
+        light: "rgba(0, 0, 0, 0.87)"
+      },
+      primary: "#303f9f"
+    },
+    edgeSize: {
+      small: "14px"
+    },
+    elevation: {
+      light: {
+        medium:
+          "0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)"
       }
-    ];
-  }, []);
-  return [...acc, ...blocks];
-}, []);
-
-const initialState = {
-  paddle1: {
-    y: 200,
-    dy: 0,
-    x: 60,
-    dx: 0,
-    landed: false
+    },
+    font: {
+      size: "14px",
+      height: "20px"
+    }
   },
-  obstacles
+  button: {
+    border: {
+      width: "1px",
+      radius: "4px"
+    },
+    padding: {
+      vertical: "8px",
+      horizontal: "16px"
+    },
+    extend: props => `
+         text-transform: uppercase;
+         font-size: 0.875rem;
+         font-weight: 500;
+         line-height: normal;
+    `
+  }
 };
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "MOVE_PADDLE_1":
-      return {
-        ...state,
-        paddle1: {
-          ...state.paddle1,
-          ...action.payload
-        }
-      };
-    case "RENDER":
-      return {
-        ...state,
-        paddle1: { ...state.paddle1, ...action.payload.paddle1 }
-      };
-    default:
-      throw new Error("Event not found: ", action.type);
-  }
-}
-
-export default function App() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  // function handleKeyDown(e) {
-  //   if (e.keyCode === 32) {
-  //     const jump = setTimeout(() => {
-  //       dispatch({
-  //         type: "MOVE_PADDLE_1",
-  //         payload: {
-  //           landed: false,
-  //           dy: 10
-  //         }
-  //       });
-  //     }, 300);
-
-  //     dispatch({
-  //       type: "MOVE_PADDLE_1",
-  //       payload: {
-  //         landed: false,
-  //         dy: -10
-  //       }
-  //     });
-  //     return () => clearTimeout(jump);
-  //   }
-  // }
-  function handleKeyUp(e) {
-    // if (e.keyCode === 32 && state.paddle1.dy !== 10) {
-    //   dispatch({
-    //     type: "MOVE_PADDLE_1",
-    //     payload: {
-    //       dy: 10
-    //     }
-    //   });
-    // }
-    if (e.keyCode === 32) {
-      const jump = setTimeout(() => {
-        dispatch({
-          type: "MOVE_PADDLE_1",
-          payload: {
-            landed: false,
-            dy: 10
-          }
-        });
-      }, 500);
-
-      dispatch({
-        type: "MOVE_PADDLE_1",
-        payload: {
-          landed: false,
-          dy: -10
-        }
-      });
-      return () => clearTimeout(jump);
-    }
-  }
-  // useEffect(() => {
-  //   window.addEventListener("keydown", handleKeyDown);
-  //   return () => window.removeEventListener("keydown", handleKeyDown);
-  // }, [state]);
-  useEffect(() => {
-    window.addEventListener("keyup", handleKeyUp);
-    return () => window.removeEventListener("keyup", handleKeyUp);
-  }, [state]);
-
-  useEffect(() => {
-    const handle = setTimeout(() => {
-      let y = state.paddle1.y;
-      let dy = state.paddle1.dy;
-      let x = state.paddle1.x;
-      let dx = state.paddle1.dx;
-      let landed = state.paddle1.landed;
-
-      const paddle1 = {
-        y,
-        dy,
-        x,
-        dx,
-        landed,
-        height: 30,
-        width: 30
-      };
-
-      const collisions = [...state.obstacles].map(ob => {
-        return willCollide(paddle1, ob);
-      });
-
-      // if (collisions.some(c => c.x)) {
-      //   dx = -dx;
-      // }
-      if (paddle1.landed === true) {
-        dy = 0;
-        landed = false;
-      }
-      // bottom limit
-      if (y + state.paddle1.dy > 300 - 25) {
-        y = 275;
-      } else if (y + state.paddle1.dy < 0) {
-        //top limit
-        y = 0;
-      } else {
-        y = y + dy;
-      }
-
-      dispatch({
-        type: "RENDER",
-        payload: {
-          paddle1: {
-            y: y,
-            dy: dy
-          }
-        }
-      });
-    }, 50);
-    return () => clearTimeout(handle);
-  }, [state.paddle1.y, state.paddle1.dy]);
-
+export default function() {
   return (
-    <GameProvider>
-      <div className="container">
-        {state.obstacles.map(({ type, ...style }) => (
-          <Obstacle type={type} style={style} />
-        ))}
-        <Paddle paddleY={state.paddle1.y} />
-      </div>
-    </GameProvider>
+    <Grommet theme={theme}>
+      <Auth>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <Route exact path="/" component={Landing} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/login" component={Login} />
+            <Switch>
+              <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <PrivateRoute exact path="/game" component={Game} />
+            </Switch>
+          </div>
+        </Router>
+      </Auth>
+    </Grommet>
   );
 }
