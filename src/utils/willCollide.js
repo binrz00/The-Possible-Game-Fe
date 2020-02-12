@@ -1,37 +1,41 @@
-export default function willCollide(paddle1, rect2) {
-  let x = false;
-  let y = false;
-  let xCurr = false;
-  let yCurr = false;
-  const rect1XNext = paddle1.x + paddle1.dx;
-  const rect1YNext = paddle1.y + paddle1.dy;
-
-  // if (paddle1.x < rect2.xf + rect2.width && paddle1.x + paddle1.width > rect2.x) {
-  //   xCurr = true;
-  // }
-  // if (paddle1.y < rect2.y + rect2.height && paddle1.y + paddle1.height > rect2.y) {
-  //   yCurr = true;
-  // }
-  // if (
-  //   yCurr &&
-  //   rect1XNext < rect2.x + rect2.width &&
-  //   rect1XNext + paddle1.width > rect2.x
-  // ) {
-  //   x = true;
-  // }
-  // if (
-  //   xCurr &&
-  //   rect1YNext < rect2.y + rect2.height &&
-  //   rect1YNext + paddle1.height > rect2.y
-  // ) {
-  //   y = true;
-  // }
-
+export default function willCollide(player, rect2) {
+  //x collision
   if (
-    rect2.y - rect2.height < paddle1.y + paddle1.height &&
-    90 < rect2.x + rect2.width < 60
+    player.y < rect2.y + 30 &&
+    rect2.y < player.y + 29 &&
+    player.x < rect2.x + rect2.width &&
+    player.x + player.width > rect2.x
   ) {
-    paddle1.landed = true;
+    player.alive = false;
   }
-  return { x, y, paddle1 };
+  if (player.y + 5 > 270) {
+    player.alive = false;
+  }
+  //y collision
+  if (
+    player.y < rect2.y + 30 &&
+    rect2.y < player.y + 5 + player.height &&
+    player.x < rect2.x + rect2.width &&
+    player.x + player.width > rect2.x &&
+    player.jumping === false
+  ) {
+    if (rect2.type === "1") {
+      player.alive = false;
+    }
+    player.landed = true;
+    player.falling = false;
+  }
+  // falling
+  if (
+    player.jumping === false &&
+    player.landed === false &&
+    player.x > rect2.x + rect2.width &&
+    player.dy === 0 &&
+    player.dy !== -5 &&
+    player.y + 5 + player.height !== 300
+  ) {
+    player.falling = true;
+  }
+
+  return { player };
 }
