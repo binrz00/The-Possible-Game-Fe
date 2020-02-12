@@ -130,6 +130,7 @@ export default function Game() {
         player.dy = 0;
       } else if (state.player.y + state.player.dy < 0) {
         //top limit
+        player.alive = false;
         player.y = 0;
       } else {
         player.y = player.y + player.dy;
