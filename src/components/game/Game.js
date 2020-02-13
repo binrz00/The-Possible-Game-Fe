@@ -64,7 +64,7 @@ export default function Game() {
             jumping: false
           }
         });
-      }, 575);
+      }, 571);
 
       dispatch({
         type: "MOVE_PLAYER",
